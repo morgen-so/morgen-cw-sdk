@@ -102,6 +102,10 @@ const wf = cw.workflow(
   }
 );
 
+// Upload, trigger remotely:
+// wf.upload().then(() => wf.trigger());
+
+// Upload, but run locally
 wf.upload().then(async () => {
   const result = await wf.run({
     httpParams: {
@@ -128,4 +132,3 @@ wf.upload().then(async () => {
   });
   console.info({ result });
 });
-//.then(() => wf.trigger({ boop: true }));
