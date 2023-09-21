@@ -1,7 +1,7 @@
-Morgen Assist – Custom Workflow SDK
+Custom Workflow SDK
 ===================================
 
-A CLI + helpers to make it easier to build, test and deploy custom workflows to the Morgen Assist platform.
+A CLI + helpers to make it easier to build, test and deploy custom workflows to the Morgen platform.
 
 :warning: This is an experimental library, breaking changes likely.
 
@@ -12,7 +12,7 @@ $ npm install morgen-cw-sdk
 ```
 
 # Requirements
-Morgen Assist account → [https://platform.morgen.so](https://platform.morgen.so)
+Morgen account → [https://platform.morgen.so](https://platform.morgen.so)
 
 Make sure to add at least one calendar integration, to enable use-cases where the workflow inserts or modifies events on your calendar.
 
@@ -105,7 +105,7 @@ To test changes to your script, try editing it and running it again. The changes
 
 Now that you've run the workflow, it will be visible in your account under [“My Workflows”](https://platform.morgen.so/workflows).
 
-You can also edit the parameters of the workflow from the Morgen Assist web app, like the trigger, but note: these will be overridden when you next run from your machine.
+You can also edit the parameters of the workflow from the Morgen platform web app, like the trigger, but note: these will be overridden when you next run from your machine.
 
 # Inserting an event into your calendar
 This next example requires you to set a calendar on the custom workflow under [“Accounts”](https://platform.morgen.so/integrations/connected). Head to the workflow settings page in the web app to add one.
