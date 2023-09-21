@@ -14,10 +14,10 @@ $ npm install morgen-cw-sdk
 # Requirements
 Morgen account → [https://platform.morgen.so](https://platform.morgen.so)
 
-Make sure to add at least one calendar integration, to enable use-cases where the workflow inserts or modifies events on your calendar.
+Make sure to add at least one calendar integration in order to enable use-cases where the workflow inserts or modifies events on your calendar.
 
 # Basic Usage
-To use the SDK, first you’ll need to configure your environment in order to connect to the Morgen APIs. To do this, set one of the following:
+To use the SDK you’ll first need to configure your environment in order to connect to the Morgen APIs. To do this, set one of the following:
 
 
 ```
@@ -65,9 +65,16 @@ testing
 ...
 ```
 
-The above workflow ran live on Morgen’s server and the output and result was returned to the terminal.
+The above workflow ran locally and the output and result was returned to the terminal.
 
-__:warning: NOTE: Controlling triggers is on the roadmap but is not currently
+To trigger the workflow on Morgen's server, there are two options:
+ - Call `.trigger()` on the workflow object in the script
+ - Call the HTTP endpoint that is provided after the workflow is uploaded (and
+   which stays the same for the lifetime of the workflow)
+   - This enables setting `httpParams` in the `trigger` object, by passing
+     either query parameters in a GET request or a JSON body in a POST request.
+
+__:warning: NOTE: Controlling triggers is on the road-map but is not currently
 supported.__
 
 If you want your script to run every hour, you can provide extra triggers in the triggers array. See more details for how to configure your workflow here: [CW Docs](https://cw-docs.morgen.so/).
