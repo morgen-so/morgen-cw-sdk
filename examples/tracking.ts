@@ -4,6 +4,11 @@ import cw, { morgen } from "..";
 const { fetchMorgen, log } = morgen.util;
 const { luxon } = morgen.deps;
 
+if (process.env.MORGEN_API_KEY)
+  throw new Error(
+    "API_KEY not supported on https://sync.morgen.so, please use MORGEN_ACCESS_TOKEN"
+  );
+
 const wf = cw.workflow(
   {
     name: "Time tracker (SDK test)",
