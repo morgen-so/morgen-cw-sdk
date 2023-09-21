@@ -74,40 +74,6 @@ To trigger the workflow on Morgen's server, there are two options:
    - This enables setting `httpParams` in the `trigger` object, by passing
      either query parameters in a GET request or a JSON body in a POST request.
 
-__:warning: NOTE: Controlling triggers is on the road-map but is not currently
-supported.__
-
-If you want your script to run every hour, you can provide extra triggers in the triggers array. See more details for how to configure your workflow here: [CW Docs](https://cw-docs.morgen.so/).
-
-```
-// example_basic.ts
-
-import cw, { morgen } from "morgen-cw-sdk";
-const { fetchMorgen, log } = morgen.util;
-
-cw.workflow(
-  {
-    name: "example_basic",
-    //
-    // NOTE: Not currently supported! (Support coming soon!)
-    //
-    triggers: [
-      {
-        "configurable": false,
-        "type": "cron",
-        "config": {
-          // Run every hour
-          "schedule": "0 * * * *"
-        }
-      }
-    ],
-  },
-  async function run(trigger) {
-    log('testing');
-  }
-)
-```
-
 To test changes to your script, try editing it and running it again. The changes should be reflected.
 
 Now that you've run the workflow, it will be visible in your account under [“My Workflows”](https://platform.morgen.so/workflows).
