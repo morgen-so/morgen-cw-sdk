@@ -21,6 +21,14 @@ class Workflow<T> {
   constructor(config: WorkflowConfig, fn: WorkflowFunction<T>) {
     this.config = config;
     this.fn = fn;
+
+    const { MORGEN_API_KEY, MORGEN_ACCESS_TOKEN } = process.env;
+    console.info({ MORGEN_API_KEY, MORGEN_ACCESS_TOKEN });
+    if (!MORGEN_API_KEY && !MORGEN_ACCESS_TOKEN) {
+      throw new Error(
+        "Invalid env: please set either MORGEN_API_KEY or MORGEN_ACCESS_TOKEN"
+      );
+    }
   }
 
   /**
