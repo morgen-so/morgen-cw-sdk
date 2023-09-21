@@ -8,21 +8,23 @@ A CLI + helpers to make it easier to build, test and deploy custom workflows to 
 # Installation
 
 ```
-$ npm install morgen-cw-sdk
+$ npm install -g typescript ts-node
+$ npm install git+https://github.com/morgen-so/morgen-cw-sdk
 ```
 
 # Requirements
-Morgen account → [https://platform.morgen.so](https://platform.morgen.so)
-
-Make sure to add at least one calendar integration in order to enable use-cases where the workflow inserts or modifies events on your calendar.
+ - Morgen account → [https://platform.morgen.so](https://platform.morgen.so)
+ - Make sure to add at least one calendar integration in order to enable
+   use-cases where the workflow inserts or modifies events on your calendar.
 
 # Basic Usage
 To use the SDK you’ll first need to configure your environment in order to connect to the Morgen APIs. To do this, set one of the following:
 
 
 ```
-MORGEN_API_KEY = 'ApiKey-.....'
-MORGEN_ACCESS_TOKEN = '...'
+// NOTE: Only requests to `https://api.morgen.so` support API_KEY
+export MORGEN_API_KEY='xGsJrvSh...'
+export MORGEN_ACCESS_TOKEN='xogjF4hksS...'
 ```
 
 Now you can provide a TypeScript function that will run in our V8 isolate environment. For now, you can copy an example to go through the flow of testing and deploying your script.
@@ -57,8 +59,7 @@ Now we can compile + run this:
 
 
 ```
-$ tsc basic_example.ts
-$ node basic_example.js
+$ ts-node basic_example.ts
 
 ...
 testing
@@ -69,6 +70,7 @@ The above workflow ran locally and the output and result was returned to the ter
 
 To trigger the workflow on Morgen's server, there are two options:
  - Call `.trigger()` on the workflow object in the script
+   - Note: There currently is no way to pass `httpParams` this way
  - Call the HTTP endpoint that is provided after the workflow is uploaded (and
    which stays the same for the lifetime of the workflow)
    - This enables setting `httpParams` in the `trigger` object, by passing
