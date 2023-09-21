@@ -36,7 +36,7 @@ export async function fetchMorgen(
   // Work-around for local fetch returning Response, with .json()
   if (typeof resp.json === "function") {
     if (resp.status >= 400) {
-      throw new Error(resp.statusText);
+      throw new Error(resp.statusText + ": " + resp.url);
     }
     return await resp.json();
   } else {
