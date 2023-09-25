@@ -12,19 +12,6 @@ global.TOKEN = `"${MORGEN_ACCESS_TOKEN}"`;
  */
 global.API_KEY = MORGEN_API_KEY;
 
-export async function fetch(url: string, opts?: Partial<RequestInit> & object) {
-  const resp = await global.fetch(url, opts);
-  // Work-around for local fetch returning Response, with .json()
-  if (typeof resp.json === "function") {
-    if (resp.status >= 400) {
-      throw new Error(resp.statusText + ": " + resp.url);
-    }
-    return await resp.json();
-  } else {
-    return JSON.parse(resp as unknown as string) as any;
-  }
-}
-
 /**
  * Function to re-create the server-side fetch function. This doesn't get sent
  * to the server, but it should do the same things when code is run locally.
