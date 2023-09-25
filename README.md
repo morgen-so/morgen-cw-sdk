@@ -1,9 +1,13 @@
-Custom Workflow SDK
-===================================
+Morgen Custom Worfklow SDK
+==========================
 
-A CLI + helpers to make it easier to build, test and deploy custom workflows to the Morgen platform.
+Automate virtually any calendar provider through a single interface, deploy your custom workflows to our cloud service with minimal effort.
 
 :warning: This is an experimental library, breaking changes likely.
+
+# Requirements
+ - Morgen account → [https://platform.morgen.so](https://platform.morgen.so)
+ - At least one calendar integration to insert or modify events → See [“Accounts”](https://platform.morgen.so/integrations/connected)
 
 # Installation
 
@@ -11,11 +15,6 @@ A CLI + helpers to make it easier to build, test and deploy custom workflows to 
 $ npm install -g typescript ts-node
 $ npm install git+https://github.com/morgen-so/morgen-cw-sdk
 ```
-
-# Requirements
- - Morgen account → [https://platform.morgen.so](https://platform.morgen.so)
- - Make sure to add at least one calendar integration in order to enable
-   use-cases where the workflow inserts or modifies events on your calendar.
 
 # Basic Usage
 To use the SDK you’ll first need to configure your environment in order to connect to the Morgen APIs. To do this, set one of the following:
