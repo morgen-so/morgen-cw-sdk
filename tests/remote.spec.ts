@@ -53,9 +53,7 @@ describe("Workflow", () => {
               method: "GET",
             }
           );
-          const eventsCount = JSON.parse(getEventsResp).data.events.length;
-          log("Events today: " + eventsCount);
-          return eventsCount;
+          return getEventsResp.length;
         }
       );
       await wf.upload();
