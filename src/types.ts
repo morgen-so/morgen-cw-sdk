@@ -61,3 +61,11 @@ export type WorkflowTrigger = {
  * Workflow user script function. Must be named `run`.
  */
 export type WorkflowFunction<T> = (trigger: WorkflowTrigger) => Promise<T>;
+
+export type WorkflowResult = {
+  result: unknown | { error: string; stack: string[] };
+  logs: {
+    ts: string;
+    log: string;
+  }[];
+};
