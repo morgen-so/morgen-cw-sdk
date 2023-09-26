@@ -8,6 +8,7 @@ global.console.log = mockConsoleLog;
 const mockFetch = jest.fn(() =>
   Promise.resolve({
     json: () => Promise.resolve({ test: "success" }),
+    text: () => Promise.resolve("plaintext result"),
   })
 );
 global.fetch = mockFetch as unknown as typeof global.fetch;
@@ -52,14 +53,14 @@ describe("Workflow", () => {
           name: "Test",
         },
         async function () {
-          const fetchResult = await fetch("https://google.com");
+          const fetchResult = await fetch("https://some.url");
           return fetchResult;
         }
       );
 
       // Run locally
       const returnValue = await wf.run(BASIC_TRIGGER);
-      expect(returnValue).toEqual({ test: "success" });
+      expect(returnValue).toEqual("plaintext result");
     });
   });
 });
