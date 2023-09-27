@@ -94,7 +94,7 @@ import cw, { morgen } from "morgen-cw-sdk";
 const { fetchMorgen, log } = morgen.util;
 const { luxon } = morgen.deps;
 
-cw.workflow(
+const wf = cw.workflow(
   {
     name: "example_create_event"
   },
@@ -113,12 +113,13 @@ cw.workflow(
       .toUTC()
       .startOf('minute')
       .toISO({includeOffset: false, suppressMilliseconds: true});
-    const timeZone = DateTime.now()._zone.name;
+    const timeZone = DateTime.now().zoneName || 'UTC';
 
     // Add an event to the user's calendar
     const resp = await fetchMorgen("https://sync.morgen.so/v1/events/create", {
       method: 'POST',
       body: JSON.stringify({
+        title: "A new event!",
         calendarId: calId,
         start,
         timeZone,
@@ -132,7 +133,7 @@ cw.workflow(
   }
 )
 
-cw.upload();
+wf.upload();
 ```
 
 You might find that the workflow fails due to the calendar not being specified.
