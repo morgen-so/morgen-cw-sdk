@@ -1,6 +1,11 @@
 import * as util from "./global";
 import * as luxon from "luxon";
-import { WorkflowConfig, WorkflowFunction, WorkflowTrigger } from "./types";
+import {
+  WorkflowConfig,
+  WorkflowFunction,
+  WorkflowResult,
+  WorkflowTrigger,
+} from "./types";
 
 /**
  * An object representing a Morgen Workflow, that can be uploaded to the server
@@ -43,14 +48,14 @@ class Workflow<T> {
    * NOTE: It's currently not possible to pass trigger parameters through this
    * method. Use the trigger URL to pass parameters.
    */
-  async trigger() {
+  async trigger(): Promise<WorkflowResult> {
     // TODO: Parameters can't get passed to the trigger function here (yet)
     const resp = util.fetchMorgen("https://api.morgen.so/workflows/execute", {
       method: "POST",
       body: JSON.stringify({ id: this.id }),
     });
     console.info("Workflow triggered...");
-    resp.then(async (resp) => {
+    return resp.then(async (resp) => {
       console.info("Workflow complete. " + this.id);
       const { result } = resp;
       result.logs.forEach((l: { ts: number; log: string[] }) => {
@@ -60,6 +65,7 @@ class Workflow<T> {
         console.info(result.result.error);
         console.info(result.result.stack);
       }
+      return result;
     });
   }
 

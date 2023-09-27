@@ -12,6 +12,19 @@ global.TOKEN = `"${MORGEN_ACCESS_TOKEN}"`;
  */
 global.API_KEY = MORGEN_API_KEY;
 
+export async function fetch(url: string, opts?: Partial<RequestInit> & object) {
+  const resp = await global.fetch(url, opts);
+  // Work-around for local fetch returning Response, with .json()
+  if (typeof resp.json === "function") {
+    if (resp.status >= 400) {
+      throw new Error(resp.statusText + ": " + resp.url);
+    }
+    return await resp.json();
+  } else {
+    return JSON.parse(resp as unknown as string) as any;
+  }
+}
+
 /**
  * Make a request to Morgen APIs, using the configured MORGEN_API_KEY or
  * MORGEN_ACCESS_TOKEN.
@@ -24,7 +37,7 @@ export async function fetchMorgen(
   const Authorization = global.API_KEY
     ? `ApiKey ${global.API_KEY}`
     : `Bearer ${JSON.parse(global.TOKEN)}`;
-  const resp = await fetch(url, {
+  return await fetch(url, {
     headers: {
       Authorization,
       Accept: "application/json",
@@ -33,15 +46,6 @@ export async function fetchMorgen(
     },
     ..._opts,
   });
-  // Work-around for local fetch returning Response, with .json()
-  if (typeof resp.json === "function") {
-    if (resp.status >= 400) {
-      throw new Error(resp.statusText + ": " + resp.url);
-    }
-    return await resp.json();
-  } else {
-    return JSON.parse(resp as unknown as string) as any;
-  }
 }
 
 // TODO: Improve this to match remote deployment
