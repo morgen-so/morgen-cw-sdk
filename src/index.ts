@@ -7,6 +7,18 @@ import {
   WorkflowTrigger,
 } from "./types";
 
+import { request } from "./generated/core/request";
+import { Morgen } from "./generated/Morgen";
+import { EventsService } from "./generated/services/EventsService";
+import { FetchHttpRequest } from "./generated/core/FetchHttpRequest";
+import { BaseHttpRequest } from "./generated/core/BaseHttpRequest";
+import { CancelablePromise } from "./generated/core/CancelablePromise";
+import { AccountsService } from "./generated/services/AccountsService";
+import { UserService } from "./generated/services/UserService";
+import { CalendarsService } from "./generated/services/CalendarsService";
+import { TasksService } from "./generated/services/TasksService";
+import { TaskListsService } from "./generated/services/TaskListsService";
+
 /**
  * An object representing a Morgen Workflow, that can be uploaded to the server
  * and run/triggered remotely or run locally.
@@ -79,8 +91,67 @@ class Workflow<T> {
    */
   async upload() {
     const fnString = this.fn.toString();
-    const userScript = [util.fetchMorgen.toString()].join() + ";\n" + fnString;
 
+    let userScript =
+      [
+        // Include generated utility functions for making requests
+        CancelablePromise.toString(),
+        BaseHttpRequest.toString(),
+        // Include non-generated request.ts, including a customised request
+        // function for processing requests and responses. This is supported by
+        // openapi-typescript-codegen through the --request option.
+        request.toString(),
+        FetchHttpRequest.toString(),
+        util.fetchMorgen.toString(),
+        Morgen.toString(),
+        util.morgen.toString(),
+        // Include generated service classes encapsulating the Morgen backend API
+        AccountsService.toString(),
+        CalendarsService.toString(),
+        EventsService.toString(),
+        TaskListsService.toString(),
+        TasksService.toString(),
+        UserService.toString(),
+      ].join(";\n") +
+      ";\n" +
+      fnString;
+
+    // TypeScript compiles these as "[Symbol]_1.[Symbol]" to disambiguate but
+    // above they are made available in the global scope, so modify the code to
+    // correctly resolve them.
+    const modules = [
+      "CancelablePromise",
+      "BaseHttpRequest",
+      "FetchHttpRequest",
+      "request",
+      "log",
+      "morgen",
+      "Morgen",
+      "EventsService",
+      "AccountsService",
+      "CalendarsService",
+      "TasksService",
+      "TaskListsService",
+      "UserService",
+    ];
+    modules.forEach((m: string) => {
+      userScript = userScript.replaceAll(`${m}_1.${m}`, m);
+    });
+
+    // Anything in global_1 = something available globally
+    //   e.g. global_1.fetchJSON
+    //        global_1.log
+    userScript = userScript.replaceAll("global_1.", "");
+
+    // Print the final user script to the console for easier debugging when
+    // errors occur.
+    console.info("Uploading user script");
+    console.info(
+      userScript
+        .split("\n")
+        .map((l, ix) => ix + 1 + ": " + l)
+        .join("\n")
+    );
     // Find a workflow with the same name
     const resp = await util.fetchMorgen("https://api.morgen.so/workflows/list");
     const workflows = resp.body as any[];
@@ -107,6 +178,10 @@ class Workflow<T> {
       console.info(
         "Trigger URL: https://api.morgen.so/workflows/run/" +
           workflowObj.triggerId
+      );
+      console.info(
+        "Config URL: https://platform.morgen.so/workflows/custom-workflow/" +
+          this.id
       );
     } else {
       console.info("Uploading new workflow");
@@ -140,6 +215,10 @@ class Workflow<T> {
         "Trigger URL: https://api.morgen.so/workflows/run/" +
           workflowObj.triggerId
       );
+      console.info(
+        "Config URL: https://platform.morgen.so/workflows/custom-workflow/" +
+          this.id
+      );
       console.info("Workflow uploaded.");
     }
   }
@@ -155,7 +234,7 @@ export default {
   workflow,
 };
 
-export const morgen = {
+export const sandbox = {
   util,
   deps: {
     luxon,

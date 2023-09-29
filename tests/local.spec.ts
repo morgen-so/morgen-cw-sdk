@@ -13,10 +13,10 @@ const mockFetch = jest.fn(() =>
 );
 global.fetch = mockFetch as unknown as typeof global.fetch;
 
-import cw, { morgen } from "..";
+import cw, { sandbox } from "..";
 import { WorkflowTrigger } from "../dist/types";
 
-const { log, fetch } = morgen.util;
+const { log, fetch } = sandbox.util;
 
 const BASIC_TRIGGER: WorkflowTrigger = {
   httpParams: {},

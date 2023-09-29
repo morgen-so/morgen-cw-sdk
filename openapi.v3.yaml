@@ -1,0 +1,921 @@
+openapi: 3.0.0
+info:
+  title: Morgen API
+  description: Morgen REST Api definitions
+  version: 3.0.0
+
+servers:
+  - url: https://api.morgen.so
+    description: Production endpoint
+  - url: https://20230926t115812-dot-morgen-d34db.oa.r.appspot.com
+    description: Developing endpoint
+
+tags:
+  - name: User
+    description: Operations on the current user
+  - name: Accounts
+    description: Operations on the authenticated accounts
+  - name: Tasks
+    description: Operations on Morgen Tasks
+  - name: Task Lists
+    description: Operations on Morgen Task Lists
+  - name: Calendars
+    description: Operations on calendars
+  - name: Events
+    description: Operations on calendar events
+
+paths:
+  "/identity":
+    get:
+      operationId: getUserIdentityV1
+      summary: Get user profile
+      tags:
+        - User
+      security:
+        - userToken: []
+        - apiKey: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/UserPropertiesImmutable"
+                  - $ref: "#/components/schemas/UserProperties"
+
+  "/identity/update":
+    post:
+      operationId: updateUserProfileV1
+      summary: Update user profile
+      tags:
+        - User
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        description: User fields to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserProperties"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/UserPropertiesImmutable"
+                  - $ref: "#/components/schemas/UserProperties"
+
+  # NOTE: This API makes more sense with account connection routes
+  "/v3/integrations/list":
+    get:
+      operationId: listIntegrationsV3
+      summary: Get a list of supported services
+      tags:
+        - Accounts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      groups:
+                        $ref: "#/components/schemas/IntegrationGroups"
+                      integrations:
+                        $ref: "#/components/schemas/Integrations"
+
+  "/v3/integrations/accounts/list":
+    get:
+      operationId: listAccountsV3
+      summary: Retrieve accounts list
+      description: Retrieve a list of accounts the user has access to
+      tags:
+        - Accounts
+      security:
+        - userToken: []
+        - apiKey: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accounts:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/AccountProperties"
+
+  "/v3/calendars/list":
+    get:
+      operationId: listCalendarsV3
+      summary: Retrieve a list of calendars the user has access to
+      description: List all the calendars connected to Morgen.
+      tags:
+        - Calendars
+      security:
+        - userToken: []
+        - apiKey: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accounts:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/AccountProperties"
+                      calendars:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: "#/components/schemas/CalendarProperties"
+                            - $ref: "#/components/schemas/CalendarContextId"
+                            - $ref: "#/components/schemas/DocumentId"
+
+  "/v3/calendars/update":
+    post:
+      operationId: updateCalendarMetadataV3
+      summary: Update calendar metadata
+      tags:
+        - Calendars
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        description: An event object
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: The ID of the calendar to update
+                accountId:
+                  type: string
+                  description: The account ID of the calendar to update
+                'morgen.so:metadata':
+                  type: object
+                  properties:
+                    busy:
+                      type: boolean
+      responses:
+        "204":
+          description: Update successful
+
+  "/v3/events/list":
+    get:
+      operationId: listEventsV3
+      summary: Retrieve events from all calendars
+      description: >
+        Retrieve events from all connected calendars, occurring within a given a [`start`, `end`] time window.
+      tags:
+        - Events
+      security:
+        - userToken: []
+        - apiKey: []
+      parameters:
+        - in: query
+          name: start
+          required: true
+          schema:
+            type: string
+            format: datetime
+        - in: query
+          name: end
+          required: true
+          schema:
+            type: string
+            format: datetime
+        - in: query
+          name: accountId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: calendarIds
+          description: >
+            If a `calendarIds` is specific, only events in the corresponding calendar are returned.
+            To filter for multiple calendars, use calendar ids separated by a comma, i.e. "calendarId_1,calendarId_2".
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      events:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: "#/components/schemas/EventProperties"
+                            - $ref: "#/components/schemas/EventContextId"
+                            - $ref: "#/components/schemas/DocumentId"
+
+  "/v3/events/create":
+    post:
+      operationId: createEventV3
+      summary: Create a calendar event
+      tags:
+        - Events
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        description: An event object
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/EventContextId"
+                - $ref: "#/components/schemas/EventProperties"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - "$ref": "#/components/schemas/EventContextId"
+                  - "$ref": "#/components/schemas/EventPropertiesImmutable"
+                  - "$ref": "#/components/schemas/EventProperties"
+                  - "$ref": "#/components/schemas/DocumentId"
+                  - type: object
+                    properties:
+                      "morgen.so:requestVirtualRoom":
+                        type: string
+                        description: "If specified, a virtual video conferencing room will be added to the event. Only supported for O365/Google events."
+                        enum:
+                          - default
+
+  "/v3/events/update":
+    post:
+      operationId: updateEventV3
+      summary: Update a calendar event
+      tags:
+        - Events
+      security:
+        - userToken: []
+        - apiKey: []
+      # TODO: Add seriesUpdateMode parameter (currently only single supported anyway)
+      requestBody:
+        description: An event object
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - "$ref": "#/components/schemas/DocumentId"
+                - "$ref": "#/components/schemas/EventContextId"
+                - "$ref": "#/components/schemas/EventProperties"
+
+
+      responses:
+        "204":
+          description: OK
+
+  "/v3/events/delete":
+    post:
+      operationId: deleteEventV3
+      summary: Delete a calendar event
+      tags:
+        - Events
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        description: The identifier of the event to delete
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - "$ref": "#/components/schemas/EventContextId"
+                - "$ref": "#/components/schemas/DocumentId"
+      responses:
+        "204":
+          description: OK
+
+  "/v2/tasks/list":
+    get:
+      operationId: listTasksV2
+      summary: Retrieve tasks
+      tags:
+        - Tasks
+      security:
+        - userToken: []
+        - apiKey: []
+      parameters:
+        - in: query
+          name: title
+          description: Filter on the title of the task. Optional.
+          schema:
+            type: string
+        - in: query
+          name: limit
+          description: Limit the numer of tasks returned. Optional.
+          schema:
+            type: number
+            default: 1
+        - in: query
+          name: showCompleted
+          required: true
+          description: Flag indicating whether deleted tasks are returned in the result. Optional. The default is False.
+          schema:
+            type: boolean
+        - in: query
+          name: updatedAfter
+          description:
+            Lower bound for a task's last modification time (as a RFC 3339 timestamp) to filter by.
+            Optional. When used, `summary` and `showCompleted` are ignored.
+          schema:
+            type: string
+            format: datetime
+        - in: query
+          name: serviceName
+          description: Required for external tasks. Optional. By default returns Morgen tasks.
+          schema:
+            type: string
+        - in: query
+          name: accountId
+          description: Required for external tasks. Optional. By default returns Morgen tasks.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - "$ref": "#/components/schemas/DocumentId"
+                    - "$ref": "#/components/schemas/TaskContextId"
+                    - "$ref": "#/components/schemas/TaskProperties"
+
+  "/v2/tasks/create":
+    post:
+      operationId: createTaskV2
+      summary: Create a Morgen task
+      tags:
+        - Tasks
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        description: Create a task in Morgen
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/TaskCreateProperties"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - "$ref": "#/components/schemas/DocumentId"
+                  - "$ref": "#/components/schemas/TaskContextId"
+
+  "/v2/tasks/update":
+    post:
+      operationId: updateTaskV2
+      summary: Update a task
+      tags:
+        - Tasks
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        description: A task patch object. All properties are optional. Only "status" can be updated for external tasks.
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - "$ref": "#/components/schemas/DocumentId"
+                - "$ref": "#/components/schemas/TaskContextId"
+                - "$ref": "#/components/schemas/TaskProperties"
+      responses:
+        "204":
+          description: OK
+
+  "/v2/tasks/delete":
+    post:
+      operationId: deleteTaskV2
+      summary: Delete a task
+      tags:
+        - Tasks
+      security:
+        - userToken: [ ]
+        - apiKey: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - "$ref": "#/components/schemas/DocumentId"
+      responses:
+        "204":
+          description: OK
+
+  "/v2/tasks/close":
+    post:
+      operationId: closeTaskV2
+      summary: Close a task
+      tags:
+        - Tasks
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - "$ref": "#/components/schemas/DocumentId"
+                - "$ref": "#/components/schemas/TaskContextId"
+      responses:
+        "204":
+          description: OK
+
+  "/v2/tasks/reopen":
+    post:
+      operationId: reopenTaskV2
+      summary: Reopen a task
+      tags:
+        - Tasks
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - "$ref": "#/components/schemas/TaskContextId"
+                - "$ref": "#/components/schemas/DocumentId"
+      responses:
+        "204":
+          description: OK
+
+  "/v2/taskLists/list":
+    get:
+      operationId: listTaskListsV2
+      summary: Retrieve task lists
+      description:
+        Retrieve task lists from Morgen or third-party tasks providers (e.g. Todoist).
+        Notice that the notion of a list might map to a different entity on other providers.
+      tags:
+        - Task Lists
+      security:
+        - userToken: []
+        - apiKey: []
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: number
+            default: 1
+        - in: query
+          name: updatedAfter
+          description:
+            Lower bound for a task list's last modification time (as a RFC 3339 timestamp) to filter by.
+            Optional. When used, `summary` is ignored.
+          schema:
+            type: string
+            format: datetime
+        - in: query
+          name: serviceName
+          description: Required for external task services
+          schema:
+            type: string
+        - in: query
+          name: accountId
+          description: Required for external task services
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: "#/components/schemas/DocumentId"
+                    - $ref: "#/components/schemas/TaskListContextId"
+                    - $ref: "#/components/schemas/TaskListProperty"
+
+  "/v2/taskLists/create":
+    post:
+      operationId: createTaskListV2
+      summary: Create a task list in Morgen
+      description: Create a new task list in Morgen. Currently it is not possible to create lists on third-party task apps with this API.
+      tags:
+        - Task Lists
+      security:
+        - userToken: []
+        - apiKey: []
+      requestBody:
+        description: A task list
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/TaskListProperty"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/DocumentId"
+                  - $ref: "#/components/schemas/TaskListContextId"
+
+  "/v2/taskLists/update":
+    post:
+      operationId: updateTaskListV2
+      summary: Update a task list in Morgen
+      description: Update a Morgen task list.
+      tags:
+        - Task Lists
+      security:
+        - userToken: [ ]
+        - apiKey: [ ]
+      requestBody:
+        description: A task list
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/DocumentId"
+                - $ref: "#/components/schemas/TaskListUpdateProperty"
+      responses:
+        "204":
+          description: OK
+
+  "/v2/taskLists/delete":
+    post:
+      operationId: deleteTaskListV2
+      summary: Delete a task list
+      tags:
+        - Task Lists
+      security:
+        - userToken: [ ]
+        - apiKey: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - "$ref": "#/components/schemas/DocumentId"
+      responses:
+        "204":
+          description: OK
+
+components:
+  securitySchemes:
+    userToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKey:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Use format "ApiKey XXXXXXXXXX"
+
+  responses:
+    UnauthorizedError:
+      description: Credentials missing or invalid
+
+  schemas:
+    DocumentId:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+
+    EventContextId:
+      type: object
+      required:
+        - calendarId
+        - accountId
+      properties:
+        calendarId:
+          type: string
+        accountId:
+          type: string
+
+    EventPropertiesImmutable:
+      type: object
+      properties:
+        # TODO: Add other IDs
+        uid:
+          type: string
+        serviceName:
+          type: string
+          enum:
+            - google
+            - o365
+
+    EventProperties:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        locations:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              name:
+                type: string
+        start:
+          # TODO: Mark as ISO datetime string
+          type: string
+          description: ISO datetime string, with no time zone information e.g. "2023-09-04T15:11:22"
+        duration:
+          # TODO: Mark as ISO duration string
+          type: string
+          description: ISO duration string e.g. "PT10M"
+        timeZone:
+          type: string
+          description: ISO timezone e.g. "Europe/Zurich"
+        showWithoutTime:
+          type: boolean
+          description: If true, this is an all-day event
+        participants:
+          type: object
+          # TODO: Specify JSCalendar participants here
+        #status:
+        #  type: string
+        #  enum:
+        #    - confirmed
+        #    - tentative
+        #    - cancelled
+        freeBusyStatus:
+          description: Indicates whether the participants are available during the event.
+          type: string
+          # TODO: Expand these
+          enum:
+            - free
+            - busy
+            - ooo
+        privacy:
+          type: string
+          enum:
+            - public
+            - private
+        "morgen.so:metadata":
+          type: object
+          properties:
+            taskId:
+              type: string
+
+    TaskContextId:
+      type: object
+      properties:
+        serviceName:
+          description: Required for external tasks
+          type: string
+        accountId:
+          description: Required for external tasks
+          type: string
+
+    TaskCreateProperties:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        descriptionContentType:
+          type: string
+          enum:
+            - text/plain
+            - text/html
+        due:
+          type: string
+        estimatedDuration:
+          type: string
+        priority:
+          type: number
+          maximum: 9
+          minimum: 0
+        progress:
+          type: string
+          enum:
+            - needs-action
+            - completed
+        taskListId:
+          type: string
+
+    TaskProperties:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        descriptionContentType:
+          type: string
+          enum:
+            - text/plain
+            - text/html
+        due:
+          type: string
+        estimatedDuration:
+          type: string
+        priority:
+          type: number
+          maximum: 9
+          minimum: 0
+        progress:
+          type: string
+          enum:
+            - needs-action
+            - completed
+        position:
+          type: number
+        taskListId:
+          type: string
+
+    CalendarContextId:
+      type: object
+      required:
+        - serviceName
+        - accountId
+      properties:
+        serviceName:
+          type: string
+        accountId:
+          type: string
+
+    CalendarProperties:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+        defaultAlertsWithoutTime:
+          type: object
+        defaultAlertsWithTime:
+          type: object
+        'morgen.so:metadata':
+          type: object
+          properties:
+            busy:
+              type: boolean
+              description: Indiciates whether an event in this calendar represents an interval where the user is busy.
+
+    TaskListProperty:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+
+    TaskListUpdateProperty:
+      type: object
+      required:
+        # TODO: Not sure why this is mandatory, but it is
+        - name
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+
+    TaskListContextId:
+      type: object
+      properties:
+        serviceName:
+          description: Required for external tasks
+          type: string
+        accountId:
+          description: Required for external tasks
+          type: string
+
+    UserPropertiesImmutable:
+      # TODO: Add more fields here
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+
+    UserProperties:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        company:
+          type: string
+
+    IntegrationGroups:
+      type: array
+      items:
+        properties:
+          type:
+            type: string
+            enum:
+              - webhooks
+              - video_conf
+              - tasks
+          displayName:
+            type: string
+
+    Integrations:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          authId:
+            type: string
+          displayName:
+            type: string
+          iconData:
+            type: string
+
+
+
+    AccountProperties:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Morgen ID for the account object
+        integrationId:
+          type: string
+          description: The identifier of the third-party service
+        providerId:
+          type: string
+          description: The user account id for the third-party service
+        providerUserId:
+          type: string
+          description: The user id on the third-party service
+
+

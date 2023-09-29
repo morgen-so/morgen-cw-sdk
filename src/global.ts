@@ -1,3 +1,5 @@
+import { Morgen } from "./generated/Morgen";
+
 const { MORGEN_API_KEY, MORGEN_ACCESS_TOKEN } = process.env;
 
 /**
@@ -79,6 +81,17 @@ export async function fetchMorgen(
     ..._opts,
   });
   return resp;
+}
+
+export function morgen() {
+  const Authorization = global.API_KEY
+    ? `ApiKey ${global.API_KEY}`
+    : `Bearer ${JSON.parse(global.TOKEN)}`;
+  return new Morgen({
+    HEADERS: { Authorization },
+    // TODO: Change to https://api.morgen.so
+    BASE: "https://20230926t115812-dot-morgen-d34db.oa.r.appspot.com",
+  });
 }
 
 // TODO: Improve this to match remote deployment

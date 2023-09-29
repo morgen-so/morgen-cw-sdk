@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "sh generate-openapi-client.sh && tsc",
     "postinstall": "tsc",
     "test": "jest"
   },
