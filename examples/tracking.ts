@@ -113,7 +113,7 @@ wf.upload().then(async () => {
     },
     eventUpdates: {
       added: [],
-      updated: [],
+      modified: [],
       removed: [],
     },
     user: {

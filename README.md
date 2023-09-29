@@ -43,7 +43,7 @@ cw.workflow(
   }
 ).run({
   httpParams: { },
-  eventUpdates: { added: [], updated: [], removed: [] },
+  eventUpdates: { added: [], modified: [], removed: [] },
   user: {
     email: "...",
     firstName: "...",

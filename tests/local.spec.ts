@@ -20,7 +20,7 @@ const { log, fetch } = sandbox.util;
 
 const BASIC_TRIGGER: WorkflowTrigger = {
   httpParams: {},
-  eventUpdates: { added: [], removed: [], updated: [] },
+  eventUpdates: { added: [], removed: [], modified: [] },
   accounts: { calendar: [] },
   user: { email: "", firstName: "" },
 };
