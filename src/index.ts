@@ -57,7 +57,7 @@ class Workflow<T> {
     console.info("Workflow triggered...");
     return resp.then(async (resp) => {
       console.info("Workflow complete. " + this.id);
-      const { result } = resp;
+      const { result } = resp.body;
       result.logs.forEach((l: { ts: number; log: string[] }) => {
         console.info(`${l.ts}: ${l.log}`);
       });
@@ -83,8 +83,7 @@ class Workflow<T> {
 
     // Find a workflow with the same name
     const resp = await util.fetchMorgen("https://api.morgen.so/workflows/list");
-    const workflows = resp as any[];
-    if (resp.error) throw resp.error;
+    const workflows = resp.body as any[];
     const existing = workflows.find((wf) => wf.name === this.config.name);
 
     if (existing) {
@@ -102,7 +101,7 @@ class Workflow<T> {
           }),
         }
       );
-      const workflowObj = resp;
+      const workflowObj = resp.body;
       this.id = workflowObj.id;
       console.info("Workflow updated!");
       console.info(
@@ -134,7 +133,7 @@ class Workflow<T> {
           }),
         }
       );
-      const workflowObj = resp;
+      const workflowObj = resp.body;
       this.id = workflowObj.id;
       console.info("Workflow created!");
       console.info(

@@ -44,7 +44,7 @@ describe("Workflow", () => {
           const todayEnd = luxon.DateTime.now()
             .endOf("day")
             .toISO({ includeOffset: false, suppressMilliseconds: true });
-          const getEventsResp = await fetchMorgen(
+          const resp = await fetchMorgen(
             "https://sync.morgen.so/v1/events/list" +
               `?calendarIds=${calId}` +
               `&start=${todayStart}` +
@@ -53,7 +53,7 @@ describe("Workflow", () => {
               method: "GET",
             }
           );
-          const eventsCount = JSON.parse(getEventsResp).data.events.length;
+          const eventsCount = resp.body.data.events.length;
           log("Events today: " + eventsCount);
           return eventsCount;
         }
