@@ -25,7 +25,7 @@ describe("Workflow", () => {
         "Testing remote logs",
       ]);
       expect(remoteOutput.result).toBe(123);
-    });
+    }, 20000);
     // TODO:
     //   - create a Morgen user account for E2E tests specifically
     it("lists events", async () => {
@@ -100,6 +100,6 @@ describe("Workflow", () => {
       await wf.upload();
       const remoteOutput = await wf.trigger();
       expect(typeof remoteOutput.result).toBe("number");
-    });
+    }, 20000);
   });
 });
