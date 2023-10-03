@@ -90,7 +90,7 @@ export function morgen() {
   return new Morgen({
     HEADERS: { Authorization },
     // TODO: Change to https://api.morgen.so
-    BASE: "https://20230926t115812-dot-morgen-d34db.oa.r.appspot.com",
+    BASE: "https://20231001t155853-dot-morgen-d34db.oa.r.appspot.com",
   });
 }
 
