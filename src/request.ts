@@ -1,7 +1,7 @@
 import type { ApiRequestOptions } from "./ApiRequestOptions";
 import type { OpenAPIConfig } from "./OpenAPI";
 import { CancelablePromise } from "./CancelablePromise";
-import { fetchJSON, log } from "../../global";
+import { fetchJSON } from "../../global";
 
 /**
  * Request method
@@ -35,6 +35,7 @@ export function request<T>(
             ...headers,
             ...config.HEADERS,
             "Content-Type": "application/json",
+            "User-Agent": `Morgen CW SDK (0.0.1)`,
           },
           body: JSON.stringify(options.body),
         });
