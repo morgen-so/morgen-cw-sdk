@@ -23,7 +23,7 @@ export class CalendarsService {
     public listCalendarsV3(): CancelablePromise<{
         data?: {
             accounts?: Array<AccountProperties>;
-            calendars?: Array<(CalendarProperties & CalendarContextId & DocumentId)>;
+            calendars?: Array<(DocumentId & CalendarContextId & CalendarProperties)>;
         };
     }> {
         return this.httpRequest.request({
@@ -41,21 +41,9 @@ export class CalendarsService {
         requestBody,
     }: {
         /**
-         * An event object
+         * An calendar update object
          */
-        requestBody: {
-            /**
-             * The ID of the calendar to update
-             */
-            id?: string;
-            /**
-             * The account ID of the calendar to update
-             */
-            accountId?: string;
-            'morgen.so:metadata'?: {
-                busy?: boolean;
-            };
-        },
+        requestBody: (DocumentId & CalendarContextId & CalendarProperties),
     }): CancelablePromise<void> {
         return this.httpRequest.request({
             method: 'POST',

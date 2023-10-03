@@ -148,9 +148,9 @@ paths:
                         type: array
                         items:
                           allOf:
-                            - $ref: "#/components/schemas/CalendarProperties"
-                            - $ref: "#/components/schemas/CalendarContextId"
                             - $ref: "#/components/schemas/DocumentId"
+                            - $ref: "#/components/schemas/CalendarContextId"
+                            - $ref: "#/components/schemas/CalendarProperties"
 
   "/v3/calendars/update":
     post:
@@ -162,24 +162,15 @@ paths:
         - userToken: []
         - apiKey: []
       requestBody:
-        description: An event object
+        description: An calendar update object
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: The ID of the calendar to update
-                accountId:
-                  type: string
-                  description: The account ID of the calendar to update
-                'morgen.so:metadata':
-                  type: object
-                  properties:
-                    busy:
-                      type: boolean
+              allOf:
+                - $ref: "#/components/schemas/DocumentId"
+                - $ref: "#/components/schemas/CalendarContextId"
+                - $ref: "#/components/schemas/CalendarProperties"
       responses:
         "204":
           description: Update successful
@@ -821,7 +812,17 @@ components:
           properties:
             busy:
               type: boolean
-              description: Indiciates whether an event in this calendar represents an interval where the user is busy.
+              description: Indiciates whether an event in this calendar
+                represents an interval where the user is busy.
+            overrideName:
+              type: string
+              description: Name of the calendar as provided in the Morgen
+                interface, overriding the name provided by the external
+                provider
+            overrideColor:
+              type: string
+              description: Hex color as provided in the Morgen interface,
+                overriding the color provided by the external provider
 
     TaskListProperty:
       type: object

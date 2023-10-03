@@ -13,6 +13,14 @@ export type CalendarProperties = {
          * Indiciates whether an event in this calendar represents an interval where the user is busy.
          */
         busy?: boolean;
+        /**
+         * Name of the calendar as provided in the Morgen interface, overriding the name provided by the external provider
+         */
+        overrideName?: string;
+        /**
+         * Hex color as provided in the Morgen interface, overriding the color provided by the external provider
+         */
+        overrideColor?: string;
     };
 };
 
