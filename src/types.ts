@@ -33,7 +33,7 @@ export type WorkflowTrigger = {
    * state that tracks which events have already been passed in a previous
    * trigger.
    */
-  eventUpdates: { added: []; removed: []; updated: [] };
+  eventUpdates: { added: []; removed: []; modified: [] };
   /**
    * Accounts that have been integrated by the user in-app.
    */

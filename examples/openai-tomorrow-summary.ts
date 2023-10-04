@@ -1,8 +1,8 @@
 // import cw, { morgen } from "morgen-cw-sdk";
-import cw, { morgen } from "..";
+import cw, { sandbox } from "..";
 
-const { fetchMorgen, log, fetch } = morgen.util;
-const { luxon } = morgen.deps;
+const { fetchMorgen, log, fetch } = sandbox.util;
+const { luxon } = sandbox.deps;
 
 const wf = cw.workflow(
   {
@@ -31,11 +31,12 @@ const wf = cw.workflow(
           temperature: 0.7,
         }),
       });
-      resp = JSON.parse(resp);
-      if (resp.error) {
-        throw new Error("Error with OpenAI: " + JSON.stringify(resp.error));
+      const parsed = JSON.parse(resp);
+      const error = parsed?.error;
+      if (error) {
+        throw new Error("Error with OpenAI: " + JSON.stringify(error));
       }
-      return resp.choices[0].message.content;
+      return parsed.choices[0].message.content;
     }
     if (!trigger.accounts?.calendar?.[0]?.calendarId)
       throw new Error("No calendar configured!");
@@ -59,7 +60,7 @@ const wf = cw.workflow(
         method: "GET",
       }
     );
-    const evs = JSON.parse(mresp);
+    const evs = mresp.body;
 
     // Get all busy events and format for ChatGPT
     const list: any[] = [];
