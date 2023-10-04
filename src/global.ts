@@ -89,8 +89,6 @@ export function morgen() {
     : `Bearer ${JSON.parse(global.TOKEN)}`;
   return new Morgen({
     HEADERS: { Authorization },
-    // TODO: Change to https://api.morgen.so
-    BASE: "https://20231001t155853-dot-morgen-d34db.oa.r.appspot.com",
   });
 }
 

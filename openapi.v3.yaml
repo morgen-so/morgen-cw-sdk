@@ -7,8 +7,6 @@ info:
 servers:
   - url: https://api.morgen.so
     description: Production endpoint
-  - url: https://20230926t115812-dot-morgen-d34db.oa.r.appspot.com
-    description: Developing endpoint
 
 tags:
   - name: User
