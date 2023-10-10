@@ -36,6 +36,7 @@ export function request<T>(
             ...config.HEADERS,
             "Content-Type": "application/json",
             "User-Agent": `Morgen CW SDK (0.0.1)`,
+            "Morgen-Sdk-Version": "0.0.1" // TODO: bind to package.json
           },
           body: JSON.stringify(options.body),
         });
