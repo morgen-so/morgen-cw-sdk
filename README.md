@@ -28,7 +28,7 @@ export MORGEN_ACCESS_TOKEN='xogjF4hksS...'
 
 Now you can provide a TypeScript function that will run in our V8 isolate environment. For now, you can copy an example to go through the flow of testing and deploying your script.
 
-```
+```ts
 // basic_example.ts
 
 import cw, { morgen } from "morgen-cw-sdk";
@@ -86,7 +86,7 @@ This next example requires you to set a calendar on the custom workflow under [â
 
 Then, try updating the example by making it insert an event the first calendar:
 
-```
+```ts
 // example_create_event.ts
 
 import cw, { morgen } from "morgen-cw-sdk";
