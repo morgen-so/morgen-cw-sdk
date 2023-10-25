@@ -139,6 +139,165 @@ wf.upload();
 You might find that the workflow fails due to the calendar not being specified.
 You can specify a calendar in the workflow settings page in the app.
 
+# User Provided Utilities
+
+You can provide your own utility functions to use in your workflow.  These can
+be functions, classes or data objects you or others write.  They need to be self
+contained and not rely on any external dependencies.  Here are a number of
+examples:
+
+## Defining a function outside of the workflow
+
+```ts
+// example_inline_utility.ts
+
+// Define a function outside of the workflow that can be used inside the workflow
+
+import cw, { morgen } from "morgen-cw-sdk";
+
+const { log } = morgen.util;
+
+function testFunction() {
+  log("testFunction called!");
+}
+
+class TestClass {
+  constructor() {
+    log("TestClass constructor called!");
+  }
+}
+
+const wf = cw.workflow(
+  {
+    name: "example_inline_utility"
+  },
+  async function run(trigger) {
+    testFunction();
+    const tc = new TestClass();
+  }
+)
+
+wf.upload(options: {
+  userUtilities: [testFunction, TestClass]
+});
+```
+
+## Importing variables from another module
+
+```ts
+// accounts-calendars.ts
+
+export const accounts = {
+  "email.address@example.com": {
+    id: "account-id"
+    calendars: {
+      "Primary": "primary-calendar-id",
+      "Other": "other-calendar-id"
+    }
+  },
+  "another.email@example.com": {
+    id: "another-account-id",
+    calendars: {
+      "Primary": "primary-calendar-id-another-account",
+      "Other": "other-calendar-id-another-account"
+    }
+  }
+}
+
+// accounts-default.ts
+
+export default {
+  "email.address@example.com": {
+    id: "account-id"
+    calendars: {
+      "Primary": "primary-calendar-id",
+      "Other": "other-calendar-id"
+    }
+  },
+  "another.email@example.com": {
+    id: "another-account-id",
+    calendars: {
+      "Primary": "primary-calendar-id-another-account",
+      "Other": "other-calendar-id-another-account"
+    }
+  }
+}
+
+
+// example_import_variable_from_module.ts
+
+// If you want to include an object, or variable from another module, you can
+// it will need to be done differently than a function or class
+
+import cw, { morgen } from "morgen-cw-sdk";
+
+const { log } = morgen.util;
+
+import { accounts } from "./accounts-calendars";
+
+// If it is a default export you need to handle a little differerent
+import accountsDefault from "./accounts-default"
+
+const wf = cw.workflow(
+  {
+    name: "example_import_variable_from_module"
+  },
+  async function run(trigger) {
+    log("morgen", accounts);
+  }
+)
+
+wf.upload(options: {
+  userUtilities: [
+    {name: "accounts", value: accounts, import_name: "account-calendars"}
+    {name: "accountsDefault", value: accountsDefault, import_name: "account-calendars-default", default: true}
+  ]
+});
+```
+
+## Import a function or class from another module
+
+```ts
+// myModule.ts
+
+import { morgen } from "morgen-cw-sdk";
+const { log } = morgen.util;
+
+export function myFunction() {
+  return log("myFunction called!");
+}
+
+// example_import_from_module.ts
+
+// Import a function or class from another module that has a different name
+// from the function or class itself
+
+import { myFunction } from "./myModule";
+
+import cw, { morgen } from "morgen-cw-sdk";
+
+const { fetchMorgen, log } = morgen.util;
+const { luxon } = morgen.deps;
+
+const wf = cw.workflow(
+  {
+    name: "example_create_event"
+  },
+  async function run(trigger) {
+    const value = myFunction();
+  }
+)
+
+wf.upload(options: {
+  userUtilities: [
+    {
+      import_name: "myModule",
+      value: myFunction
+    }
+  ]
+});
+```
+
 # Advanced Usage
 
 You’ll probably want to write more interesting scripts to see some of the more

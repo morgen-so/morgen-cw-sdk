@@ -69,3 +69,23 @@ export type WorkflowResult = {
     log: string;
   }[];
 };
+
+export interface UtilityNaming {
+  name: string;
+  import_name: string;
+  default: boolean
+}
+
+export interface UserUtilityVariable {
+  name: string;
+  value: any;
+  import_name?: string;
+  default?: boolean
+}
+
+export interface UserUtilityImport {
+  value: any;
+  import_name: string;
+}
+
+export type UserUtility = Function | UserUtilityVariable | UserUtilityImport;
