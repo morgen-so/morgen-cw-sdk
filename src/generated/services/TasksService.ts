@@ -46,7 +46,7 @@ export class TasksService {
         /**
          * Required for external tasks. Optional. By default returns Morgen tasks.
          */
-        serviceName?: string,
+        serviceName?: 'googleTasks' | 'microsoftOutlook' | 'microsoftToDo' | 'morgen' | 'todoist',
         /**
          * Required for external tasks. Optional. By default returns Morgen tasks.
          */

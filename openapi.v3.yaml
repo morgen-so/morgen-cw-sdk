@@ -354,6 +354,12 @@ paths:
           description: Required for external tasks. Optional. By default returns Morgen tasks.
           schema:
             type: string
+            enum:
+              - googleTasks
+              - microsoftOutlook
+              - microsoftToDo
+              - morgen
+              - todoist
         - in: query
           name: accountId
           description: Required for external tasks. Optional. By default returns Morgen tasks.
