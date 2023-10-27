@@ -235,7 +235,7 @@ const { log } = morgen.util;
 
 import { accounts } from "./accounts-calendars";
 
-// If it is a default export you need to handle a little differerent
+// If it is a default export you need to handle a little different
 import accountsDefault from "./accounts-default"
 
 const wf = cw.workflow(
