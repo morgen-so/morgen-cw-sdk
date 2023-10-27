@@ -337,8 +337,9 @@ paths:
             default: 1
         - in: query
           name: showCompleted
-          required: true
-          description: Flag indicating whether deleted tasks are returned in the result. Optional. The default is False.
+          description: Flag indicating whether deleted tasks are returned in
+            the result. Value of true NOT supported for 3rd-parties. Optional.
+            The default is False.
           schema:
             type: boolean
         - in: query

@@ -20,17 +20,13 @@ export class TasksService {
      * @throws ApiError
      */
     public listTasksV2({
-        showCompleted,
         title,
         limit = 1,
+        showCompleted,
         updatedAfter,
         serviceName,
         accountId,
     }: {
-        /**
-         * Flag indicating whether deleted tasks are returned in the result. Optional. The default is False.
-         */
-        showCompleted: boolean,
         /**
          * Filter on the title of the task. Optional.
          */
@@ -39,6 +35,10 @@ export class TasksService {
          * Limit the numer of tasks returned. Optional.
          */
         limit?: number,
+        /**
+         * Flag indicating whether deleted tasks are returned in the result. Value of true NOT supported for 3rd-parties. Optional. The default is False.
+         */
+        showCompleted?: boolean,
         /**
          * Lower bound for a task's last modification time (as a RFC 3339 timestamp) to filter by. Optional. When used, `summary` and `showCompleted` are ignored.
          */

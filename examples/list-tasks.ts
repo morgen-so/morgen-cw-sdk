@@ -25,7 +25,6 @@ const wf = cw.workflow(
 
     const taskResp = await morgen().tasks.listTasksV2({
       accountId,
-      showCompleted: true,
       updatedAfter: "2023-10-24T00:00:00Z",
       serviceName,
     });

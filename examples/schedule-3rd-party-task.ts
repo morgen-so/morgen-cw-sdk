@@ -35,7 +35,6 @@ const wf = cw.workflow(
 
     const taskResp = await morgen().tasks.listTasksV2({
       accountId: taskAccountId,
-      showCompleted: true,
       serviceName,
     });
 
