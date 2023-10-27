@@ -249,8 +249,17 @@ const wf = cw.workflow(
 
 wf.upload(options: {
   userUtilities: [
+    // Import name is the final part of the module path.  If there are multiple
+    // modules with the same final part, it will break.
+    // eg:
+    //    import { accounts } from "./accounts-calendars";
+    //        would have import_name: "accounts-calendars"
+    //    import { accounts } from "./accounts/my-accounts";
+    //        would have import_name: "my-accounts"
+    //    import { accounts } from "./helpers/accounts/personal";
+    //        would have import_name: "personal"
     {name: "accounts", value: accounts, import_name: "account-calendars"}
-    {name: "accountsDefault", value: accountsDefault, import_name: "account-calendars-default", default: true}
+    {name: "accountsDefault", value: accountsDefault, import_name: "accounts-default", default: true}
   ]
 });
 ```

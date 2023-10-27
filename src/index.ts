@@ -142,8 +142,8 @@ class Workflow<T> {
           throw new Error("Utility must either be a function/class, have an import_name and function value or have a name and value")
         }
 
+        // Simplified canonicalisation of import names, it may not cover all cases
         import_name = import_name.replace(/[^a-zA-Z0-9_]/g, "_");
-        import_name = import_name.replace(/_+/g, "_");
       }
       else {
         name = s.name;
