@@ -12,6 +12,8 @@ Automate virtually any calendar provider through a single interface, deploy your
 # Installation
 
 ```
+$ cd my-morgen-workflows
+$ npm init
 $ npm install -g typescript ts-node
 $ npm install git+https://github.com/morgen-so/morgen-cw-sdk
 ```
