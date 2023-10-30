@@ -1,6 +1,8 @@
 import * as util from "./global";
 import * as luxon from "luxon";
 import {
+  UserUtility,
+  UtilityNaming,
   WorkflowConfig,
   WorkflowFunction,
   WorkflowResult,
@@ -88,9 +90,70 @@ class Workflow<T> {
    *
    * NOTE: The uploaded workflow cannot currently be configured here (apart
    * from the name). See the platform UI for configuration of accounts.
+   *
+   * NOTE: UserUtilities that are not functions/classes need to have a name and value.
+   * The value must also be JSON serializable.  They can't refer to external resources
+   * unless they are also included in userUtilities or part of the SDK.
    */
-  async upload() {
+  async upload(options?: { userUtilities?: UserUtility[] }) {
     const fnString = this.fn.toString();
+
+    function mapUserUtilities(s: UserUtility) {
+      if (!(s instanceof Function)) {
+        if (!("value" in s)) {
+          throw new Error("Utility must either be a function/class, have an import_name and function value or have a name and value")
+        }
+        if (s.value instanceof Function) {
+          return s.value.toString();
+        }
+        else {
+          if (!("name" in s)) {
+            throw new Error("Utility must either be a function/class, have an import_name and function value or have a name and value")
+          }
+          return `let ${s.name} = ${JSON.stringify(s.value)}`
+        }
+      }
+      return s.toString()
+    }
+
+    function mapUserUtitlityNames(s: UserUtility): UtilityNaming {
+      var isDefault = false;
+      var import_name = "";
+      var name = "";
+      if ("default" in s) {
+        isDefault = s.default;
+      }
+      if (!(s instanceof Function)) {
+        import_name = "";
+        if ("import_name" in s) {
+          import_name = s.import_name;
+        }
+        else if ("name" in s) {
+          import_name = s.name;
+        }
+
+        if (s.value instanceof Function) {
+          name = s.value.name;
+        }
+        else if ("name" in s) {
+          name = s.name
+        }
+        else {
+          throw new Error("Utility must either be a function/class, have an import_name and function value or have a name and value")
+        }
+
+        // Simplified canonicalisation of import names, it may not cover all cases
+        import_name = import_name.replace(/[^a-zA-Z0-9_]/g, "_");
+      }
+      else {
+        name = s.name;
+        import_name = s.name
+      }
+      return {import_name, name, default: isDefault}
+    }
+
+    let userUtilities = (options?.userUtilities || []).map(mapUserUtilities);
+    let userUtilityNames = (options?.userUtilities || []).map(mapUserUtitlityNames)
 
     let userScript =
       [
@@ -112,6 +175,8 @@ class Workflow<T> {
         TaskListsService.toString(),
         TasksService.toString(),
         UserService.toString(),
+        // Include user specified utilities
+        ...userUtilities,
       ].join(";\n") +
       ";\n" +
       fnString;
@@ -137,6 +202,17 @@ class Workflow<T> {
     modules.forEach((m: string) => {
       userScript = userScript.replaceAll(`${m}_1.${m}`, m);
     });
+
+    // Fix references to user utilities
+    userUtilityNames.forEach((m: UtilityNaming) => {
+      if (!m.default) {
+        userScript = userScript.replaceAll(`${m.import_name}_1.${m.name}`, m.name);
+      }
+      else {
+        userScript = userScript.replaceAll(`${m.import_name}_1.default`, m.name);
+      }
+    });
+
 
     // Anything in global_1 = something available globally
     //   e.g. global_1.fetchJSON
