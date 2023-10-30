@@ -74,23 +74,22 @@ export type WorkflowResult = {
  * Internal interface for specifying user utilities for replacement
  * within a script.  It is built from the different types of user
  * utilities for a uniform interface.
- *
- * @param name - The name of the utility, if it is a function or class
- *   it is inferred from the passed function.  If it is a variable,
- *   then it must be specified using the `name` property of the
- *   UserUtilityVariable interface.
- *
- * @param import_name - The canonicalised name of the module that the
- *  utility is imported from.  This is used to build the replacement
- *  usage within the generated script.
- *
- * @param default - Whether the utility is the default export from
- *  the module.  This is used to build the replacement usage within
- *  the generated script.
  */
 export interface UtilityNaming {
+  /** The name of the utility, if it is a function or class, if it is
+   * a function or class it is inferred from the passed function.  If
+   * it is a variable, then it must be specified using the `name`
+   * property of the UserUtilityVariable interface.
+   */
   name: string;
+  /** The canonicalised name of the module that the utility is imported
+   * from.  This is used to build the replacement usage within the
+   * generated script.
+   */
   import_name: string;
+  /** Whether the utility is the default export from the module.  This
+   * is used to build the replacement usage within the generated script.
+   */
   default: boolean
 }
 
@@ -98,30 +97,29 @@ export interface UtilityNaming {
 /**
  * Interface for specifying a user utility variable.  Either from outside
  * of the script, or an imported module.
- *
- * @param name - The name of the variable or function within the script.
- *
- * @param value - The value of the variable, or the function
- *
- * @param import_name - The final part of the module name that the variable
- *  is imported from.
- *  eg:
- *   import { foo } from 'bar'
- *   import_name = 'bar'
- *
- *   import { foo } from 'bar/baz'
- *   import_name = 'baz'
- *
- *   import { foo } from 'bar/baz-foo'
- *   import_name = 'baz-foo'
- * @param default - Whether the variable is the default export from the
- *  module.  This is used to build the replacement usage within the
- *  generated script.
  */
 export interface UserUtilityVariable {
+  // The name of the variable or function within the script
   name: string;
+  // The value of the variable, or the function
   value: any;
+  /** The final part of the module name that the function or class is imported from
+   * eg:
+   * ```
+   * import { foo } from 'bar'
+   * import_name = 'bar'
+   *
+   * import { foo } from 'bar/baz'
+   * import_name = 'baz'
+   *
+   * import { foo } from 'bar/baz-foo'
+   * import_name = 'baz-foo'
+   * ```
+   */
   import_name?: string;
+  /** Whether the variable is the default export from the module
+   * this is used to build the replacement usage within the generated script
+   */
   default?: boolean
 }
 
@@ -129,24 +127,23 @@ export interface UserUtilityVariable {
  * Interface for specifying a user utility import.  This is used to
  * use a function/class within the script that is imported from
  * another module.
- *
- * @param value - The function or class that is imported from the module.
- *
- * @param import_name - The final part of the module name that the function
- *  or class is imported from.
- *  eg:
- *   import { foo } from 'bar'
- *   import_name = 'bar'
- *
- *   import { foo } from 'bar/baz'
- *   import_name = 'baz'
- *
- *   import { foo } from 'bar/baz-foo'
- *   import_name = 'baz-foo'
- *
  */
 export interface UserUtilityImport {
+  // The function or class that is imported from the module
   value: any;
+  /* The final part of the module name that the function or class is imported from
+   * eg:
+   * ```
+   * import { foo } from 'bar'
+   * import_name = 'bar'
+   *
+   * import { foo } from 'bar/baz'
+   * import_name = 'baz'
+   *
+   * import { foo } from 'bar/baz-foo'
+   * import_name = 'baz-foo'
+   * ```
+   */
   import_name: string;
 }
 
