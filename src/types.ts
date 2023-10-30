@@ -90,18 +90,17 @@ export interface UtilityNaming {
   /** Whether the utility is the default export from the module.  This
    * is used to build the replacement usage within the generated script.
    */
-  default: boolean
+  default: boolean;
 }
-
 
 /**
  * Interface for specifying a user utility variable.  Either from outside
  * of the script, or an imported module.
  */
 export interface UserUtilityVariable {
-  // The name of the variable or function within the script
+  /** The name of the variable or function within the script */
   name: string;
-  // The value of the variable, or the function
+  /** The value of the variable, or the function */
   value: any;
   /** The final part of the module name that the function or class is imported from
    * eg:
@@ -120,7 +119,7 @@ export interface UserUtilityVariable {
   /** Whether the variable is the default export from the module
    * this is used to build the replacement usage within the generated script
    */
-  default?: boolean
+  default?: boolean;
 }
 
 /**
@@ -129,9 +128,9 @@ export interface UserUtilityVariable {
  * another module.
  */
 export interface UserUtilityImport {
-  // The function or class that is imported from the module
+  /** The function or class that is imported from the module */
   value: any;
-  /* The final part of the module name that the function or class is imported from
+  /** The final part of the module name that the function or class is imported from
    * eg:
    * ```
    * import { foo } from 'bar'
