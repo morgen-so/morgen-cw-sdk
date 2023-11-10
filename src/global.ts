@@ -52,10 +52,13 @@ export async function fetchJSON(
       })
     );
   }
+  const contentType = resp.headers.get('Content-Type');
   return {
     status: resp.status,
     statusText: resp.statusText,
-    body: await resp.json(),
+    body: contentType?.startsWith('application/json')
+      ? await resp.json()
+      : await resp.text(),
   };
 }
 
