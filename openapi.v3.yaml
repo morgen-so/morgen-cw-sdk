@@ -914,7 +914,13 @@ components:
     UserPropertiesImmutable:
       # TODO: Add more fields here
       type: object
+      required:
+        - _id
+        - email
+        - username
       properties:
+        _id:
+          type: string
         username:
           type: string
         email:
@@ -929,6 +935,17 @@ components:
           type: string
         company:
           type: string
+        preferences:
+          nullable: true
+          type: object
+          properties:
+            workingHours:
+              nullable: true
+              type: array
+              items:
+                type: string
+                example: 'MO/0900/1800'
+
 
     IntegrationGroups:
       type: array

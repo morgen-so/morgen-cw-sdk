@@ -7,5 +7,8 @@ export type UserProperties = {
     firstName?: string;
     lastName?: string;
     company?: string;
+    preferences?: {
+        workingHours?: Array<string> | null;
+    } | null;
 };
 

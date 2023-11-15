@@ -4,7 +4,8 @@
 /* eslint-disable */
 
 export type UserPropertiesImmutable = {
-    username?: string;
-    email?: string;
+    _id: string;
+    username: string;
+    email: string;
 };
 
