@@ -21,6 +21,8 @@ tags:
     description: Operations on calendars
   - name: Events
     description: Operations on calendar events
+  - name: Availability
+    description: Operations on user availability
 
 paths:
   "/identity":
@@ -615,6 +617,55 @@ paths:
       responses:
         "204":
           description: OK
+
+  "/v3/availability/list":
+    get:
+      operationId: listAvailabilityV3
+      summary: List availability of team members or the requesting user
+      tags:
+        - Availability
+      security:
+        - userToken: [ ]
+        - apiKey: [ ]
+      parameters:
+        - in: query
+          name: start
+          description: ISO datetime string, with no time zone information e.g. "2023-09-04T15:11:22"
+          schema:
+            type: string
+        - in: query
+          name: end
+          description: ISO datetime string, with no time zone information e.g. "2023-09-04T15:11:22"
+          schema:
+            type: string
+        - in: query
+          name: queryIds
+          description: The IDs of users to query, must be the current user or members of the user's team.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - participants
+                properties:
+                  participants:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      properties:
+                        events:
+                          type: array
+                          items:
+                            allOf:
+                              - $ref: "#/components/schemas/DocumentId"
+                              - $ref: "#/components/schemas/EventContextId"
+                              - $ref: "#/components/schemas/EventPropertiesImmutable"
+                              - $ref: "#/components/schemas/EventProperties"
 
 components:
   securitySchemes:

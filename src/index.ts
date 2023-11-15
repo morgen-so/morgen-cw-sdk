@@ -18,6 +18,7 @@ import { UserService } from "./generated/services/UserService";
 import { CalendarsService } from "./generated/services/CalendarsService";
 import { TasksService } from "./generated/services/TasksService";
 import { TaskListsService } from "./generated/services/TaskListsService";
+import { AvailabilityService } from "./generated/services/AvailabilityService";
 
 /**
  * An object representing a Morgen Workflow, that can be uploaded to the server
@@ -109,6 +110,7 @@ class Workflow<T> {
         AccountsService.toString(),
         CalendarsService.toString(),
         EventsService.toString(),
+        AvailabilityService.toString(),
         TaskListsService.toString(),
         TasksService.toString(),
         UserService.toString(),
@@ -128,6 +130,7 @@ class Workflow<T> {
       "morgen",
       "Morgen",
       "EventsService",
+      "AvailabilityService",
       "AccountsService",
       "CalendarsService",
       "TasksService",
