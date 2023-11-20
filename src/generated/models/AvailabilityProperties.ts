@@ -3,9 +3,4 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type UserPropertiesImmutable = {
-    _id: string;
-    username: string;
-    email: string;
-};
-
+export type AvailabilityProperties = Record<string, any>;

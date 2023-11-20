@@ -7,6 +7,7 @@ import type { OpenAPIConfig } from './core/OpenAPI';
 import { FetchHttpRequest } from './core/FetchHttpRequest';
 
 import { AccountsService } from './services/AccountsService';
+import { AvailabilityService } from './services/AvailabilityService';
 import { CalendarsService } from './services/CalendarsService';
 import { EventsService } from './services/EventsService';
 import { TaskListsService } from './services/TaskListsService';
@@ -18,6 +19,7 @@ type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 export class Morgen {
 
     public readonly accounts: AccountsService;
+    public readonly availability: AvailabilityService;
     public readonly calendars: CalendarsService;
     public readonly events: EventsService;
     public readonly taskLists: TaskListsService;
@@ -40,6 +42,7 @@ export class Morgen {
         });
 
         this.accounts = new AccountsService(this.request);
+        this.availability = new AvailabilityService(this.request);
         this.calendars = new CalendarsService(this.request);
         this.events = new EventsService(this.request);
         this.taskLists = new TaskListsService(this.request);

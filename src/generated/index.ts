@@ -11,6 +11,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { AccountProperties } from './models/AccountProperties';
+export type { AvailabilityProperties } from './models/AvailabilityProperties';
 export type { CalendarContextId } from './models/CalendarContextId';
 export type { CalendarProperties } from './models/CalendarProperties';
 export type { DocumentId } from './models/DocumentId';
@@ -29,6 +30,7 @@ export type { UserProperties } from './models/UserProperties';
 export type { UserPropertiesImmutable } from './models/UserPropertiesImmutable';
 
 export { AccountsService } from './services/AccountsService';
+export { AvailabilityService } from './services/AvailabilityService';
 export { CalendarsService } from './services/CalendarsService';
 export { EventsService } from './services/EventsService';
 export { TaskListsService } from './services/TaskListsService';
